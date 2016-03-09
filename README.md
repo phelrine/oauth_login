@@ -18,7 +18,6 @@ func main() {
 	cookie := oauth2.NewCookie("cookieSecret")
 	auther := oauth2.New(provider, cookie)
 
-	http.HandleFunc("/login", auther.Redirect)
 	http.HandleFunc("/oauth2callback", auther.Callback)
 
 	http.HandleFunc("/", func handler(w http.ResponseWriter, r *http.Request) {
@@ -26,7 +25,7 @@ func main() {
 		if session != nil {
 			fmt.Fprintf(w, "Hello, %s", session.Email)
 		} else {
-			fmt.Fprintf(w, "Hello, Guest")
+			auther.Redirect(w, r)
 		}
 	})
 
