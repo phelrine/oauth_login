@@ -1,8 +1,7 @@
-package oauth2
+package oauth_login
 
 import (
 	"net/http"
-	"net/url"
 
 	"golang.org/x/oauth2"
 )
@@ -31,30 +30,28 @@ func (o *OAuth2) Redirect(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, url, http.StatusFound)
 }
 
-func (o *OAuth2) Callback(w http.ResponseWriter, r *http.Request) error {
+func (o *OAuth2) Callback(w http.ResponseWriter, r *http.Request) (*Session, error) {
 	err := r.ParseForm()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	code := r.Form.Get("code")
 	token, err := o.provider.Exchange(oauth2.NoContext, code)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	session, err := o.provider.GetSession(token)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if err := o.cookie.Save(w, r, session); err != nil {
-		return err
+		return nil, err
 	}
 
-	next := getNextPath(r)
-	http.Redirect(w, r, next, http.StatusFound)
-	return nil
+	return session, nil
 }
 
 func (o *OAuth2) Authenticate(r *http.Request) (*Session, error) {
@@ -69,11 +66,6 @@ func (o *OAuth2) Logout(w http.ResponseWriter, r *http.Request) {
 	o.cookie.clearCookie(w, r)
 }
 
-func getNextPath(req *http.Request) string {
-	state := req.Form.Get("state")
-	next, err := url.Parse(state)
-	if err != nil {
-		return "/"
-	}
-	return next.Path
+func (o *OAuth2) RequestURI(r *http.Request) string {
+	return r.Form.Get("state")
 }

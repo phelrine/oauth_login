@@ -1,4 +1,4 @@
-package oauth2
+package oauth_login
 
 import (
 	"net"
@@ -27,7 +27,7 @@ func NewCookie(secret string) *Cookie {
 	return &Cookie{
 		Name:     "_oauth2",
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   false,
 		Age:      time.Hour * 720,
 		sc:       securecookie.New(key, key),
 	}

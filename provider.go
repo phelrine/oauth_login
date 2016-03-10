@@ -1,4 +1,4 @@
-package oauth2
+package oauth_login
 
 import (
 	"golang.org/x/net/context"
