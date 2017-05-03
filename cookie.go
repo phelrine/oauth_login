@@ -68,11 +68,15 @@ func (c *Cookie) makeCookie(req *http.Request, value string, expiration time.Dur
 		Secure:   c.Secure,
 		Expires:  now.Add(expiration),
 	}
-	if host, _, err := net.SplitHostPort(req.Host); err != nil {
-		panic(err)
-	} else {
-		raw.Domain = host
-	}
+
+	/*
+		if host, _, err := net.SplitHostPort(req.Host); err != nil {
+			panic(err)
+		} else {
+			raw.Domain = host
+		}
+	*/
+
 	return raw
 }
 
