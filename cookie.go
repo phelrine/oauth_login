@@ -1,7 +1,6 @@
 package oauth_login
 
 import (
-	"net"
 	"net/http"
 	"time"
 
